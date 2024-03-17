@@ -65,6 +65,8 @@ networks:
     external: true
   traefik-network:
     external: true
+  mail-network:
+    external: true
 
 volumes:
   keycloak-postgres:
