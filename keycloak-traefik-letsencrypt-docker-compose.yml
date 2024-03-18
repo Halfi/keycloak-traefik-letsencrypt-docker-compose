@@ -123,6 +123,8 @@ services:
       start_period: 90s
     labels:
       - "traefik.enable=true"
+      - "traefik.experimental.http3=true"
+      - "traefik.entryPoints.name.http3={}"
       - "traefik.http.routers.keycloak.rule=Host(`${KEYCLOAK_HOSTNAME}`)"
       - "traefik.http.routers.keycloak.service=keycloak"
       - "traefik.http.routers.keycloak.entrypoints=websecure"
@@ -181,7 +183,9 @@ services:
       start_period: 5s
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_HOSTNAME}`)"
+      - "traefik.experimental.http3=true"
+      - "traefik.entryPoints.name.http3={}"
+      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_HOSTNAME}`) && PathPrefix(`/_adminx/traefik`)"
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
@@ -192,8 +196,10 @@ services:
       - "traefik.http.middlewares.authtraefik.basicauth.users=${TRAEFIK_BASIC_AUTH}"
       - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
       - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https,compresstraefik,admin-stripprefix"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+      - "traefik.http.middlewares.admin-stripprefix.stripprefix.prefixes=/_adminx/traefik"
     restart: unless-stopped
 
   backups:
