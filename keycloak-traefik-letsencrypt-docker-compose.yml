@@ -123,6 +123,8 @@ services:
       start_period: 90s
     labels:
       - "traefik.enable=true"
+      - "traefik.experimental.http3=true"
+      - "traefik.entryPoints.name.http3={}"
       - "traefik.http.routers.keycloak.rule=Host(`${KEYCLOAK_HOSTNAME}`)"
       - "traefik.http.routers.keycloak.service=keycloak"
       - "traefik.http.routers.keycloak.entrypoints=websecure"
